@@ -1,54 +1,5 @@
-#define USE_SERIAL
-
-//##############################################################################
-//##############################################################################
-//                                                                           #
 // 20170103 SCL creation
-/*
-Packet format
 
-<
-*/
-
-//
-// contains code hacked from
-// Glediator to WS2812 pixel converter                                         #
-// by R. Heller                                                                #
-// V 1.0 - 07.01.2014                                                          #//            
-// wwww.SolderLab.de                                                           #
-//                                                                             #
-// Receives serial data in Glediator protocol format @ 1 MBit/s                #
-// and distributes it to a connectect chain of WS2812 pixels                   #
-//                                                                             #
-// Adjust the correct DATA PIN and the correct NUMBER OF PIXELS you are using  # 
-// in the definitions section below before uploading this sketch to your       #
-// Arduino device.                                                             #
-//                                                                             #
-// Maximum number of supported pixels is 512 !!!                               #
-//                                                                             #
-// In the Glediator software set output mode to "Glediator_Protocol",          #
-// color order to "GRB" and baud rate to "1000000"                             #
-//                                                                             #
-//##############################################################################
-//##############################################################################
-
-
-//##############################################################################
-//                                                                             #
-// Definitions --> Make changes ONLY HERE                                      #
-//                                                                             #
-// To find out the correct port, ddr and pin name when you just know the       #
-// Arduino's digital pin number just google for "Arduino pin mapping".         #
-// In the present example digital Pin 6 is used which corresponds to "PORTD",  #
-// "DDRD" and "6", respectively.                                               #
-//                                                                             #
-//##############################################################################
-
-//##############################################################################
-//                                                                             #
-// Variables                                                                   #
-//                                                                             #
-//##############################################################################
 #include "WS2812Remote.h"
 
 PIXEL_GRB g_pixelBuffer[PIXEL_CNT];
@@ -194,24 +145,9 @@ void doPkt()
 void setup()
 {
   // Set data pin as output
-  DATA_DDR |= (1 << DATA_PIN);
-  //  pinMode(DATA_PIN,OUTPUT);
+  DATA_DDR |= (1 << DATA_PIN);    //  pinMode(DATA_PIN,OUTPUT);
 
-
-#ifdef USE_SERIAL
   Serial.begin(BAUD_RATE);
-#else
-  ptr=display_buffer;
-
-  UCSR0A |= (1<<U2X0);                                
-  UCSR0B |= (1<<RXEN0)  | (1<<TXEN0) | (1<<RXCIE0);   
-  UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00)             ; 
-  UBRR0H = 0;
-  UBRR0L = 1; //Baud Rate 1 MBit (at F_CPU = 16MHz)
-  
-  //Enable global interrupts
-  sei();
-#endif // USE_SERIAL
 
   // blank out the screen on startup
   pixelFill(g_BlkPixel);
@@ -227,8 +163,7 @@ void setup()
 
 void loop()
 {  
-#ifdef USE_SERIAL
-  /*
+  /*debug stuff
   uint8_t b = readByte();
   Serial.write(b);
   switch(b) {
@@ -247,41 +182,6 @@ void loop()
   default:
     ;
   }    
-#else	
-  if (go==1) 
-  {
-    cli();
-    ShowBuffer(); 
-    sei();
-    go=0;
-  }
-#endif // USE_SERIAL
 }
-
-
-//##############################################################################
-//                                                                             #
-// UART-Interrupt-Prozedur (called every time one byte is compeltely received) #
-//                                                                             #
-//##############################################################################
-
-#ifndef USE_SERIAL
-ISR(USART_RX_vect) 
-{
-  uint8_t b;
-  b=UDR0;
-  
-  if (b == 1)  {pos=0; ptr=display_buffer; return;}    
-  if (pos == (PIXEL_CNT*3)) {} else {*ptr=b; ptr++; pos++;}  
-  if (pos == ((PIXEL_CNT*3)-1)) {go=1;}
-}
-#endif // USE_SERIAL
-
-
-//##############################################################################
-//                                                                             #
-// End of program                                                              #
-//                                                                             #
-//##############################################################################
 
 

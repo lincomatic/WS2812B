@@ -1,8 +1,32 @@
 #pragma once
 
+
+//##############################################################################
+//                                                                             #
+// contains code hacked from
+// Glediator to WS2812 pixel converter                                         #
+// by R. Heller                                                                #
+// V 1.0 - 07.01.2014                                                          #//            
+// www.SolderLab.de                                                            #
+//                                                                             #
+// Maximum number of supported pixels is 512 !!!                               #
+//                                                                             #
+// In the Glediator software set output mode to "Glediator_Protocol",          #
+// color order to "GRB" and baud rate to "1000000"                             #
+//                                                                             #
+//##############################################################################
+//##############################################################################
+//                                                                             #
+// To find out the correct port, ddr and pin name when you just know the       #
+// Arduino's digital pin number just google for "Arduino pin mapping".         #
+// In the present example digital Pin 2 is used which corresponds to "PORTD",  #
+// "DDRD" and "2", respectively.                                               #
+//                                                                             #
+//##############################################################################
+
 // tested successfully using FTDI and Windows host PC at 1000000 baud
-//#define BAUD_RATE 1000000 //256000//1000000 // 115200
-#define BAUD_RATE 115200
+#define BAUD_RATE 1000000 //256000//1000000 // 115200
+//#define BAUD_RATE 115200
 #define DATA_PORT          PORTD
 #define DATA_DDR           DDRD						
 #define DATA_PIN           2							
