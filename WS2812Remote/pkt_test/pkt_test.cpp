@@ -25,15 +25,21 @@
 #include <stdio.h>
 #include "serialib.h"
 
-
+#ifdef _WIN32
 #include <windows.h>
 #define SLEEP(x) Sleep(x)
+#else
+#include <unistd.h>
+#define SLEEP(x) usleep(x*1000)
+#endif
+
 
 
 #include "../WS2812Remote.h"
 uint8_t buf[1024];
 
 #define COMM_PORT "\\\\.\\COM3"
+//#define COMM_PORT "/dev/ttyUSB0"
 
 void setChkByte(int pktlen)
 {
@@ -63,6 +69,7 @@ int main(int argc,char *argv[])
   serial.Write(buf, pktlen);
 
   // blank the screen
+  printf("blank...\n");
   pktlen = 3;
   buf[0] = START_BYTE_PKT;
   buf[2] = OPC_BLANK;
@@ -71,6 +78,7 @@ int main(int argc,char *argv[])
   SLEEP(1000);
   
   // fill screen with 1 color
+  printf("fill...\n");
   pktlen = 6;
   buf[0] = START_BYTE_PKT;
   buf[2] = OPC_FILL;
@@ -82,6 +90,7 @@ int main(int argc,char *argv[])
   SLEEP(1000);
 
   // cycle random color pixels
+  printf("cycle...\n");
   PIXEL_GRB *pixBuf = (PIXEL_GRB *)(buf + 3);
   while (1) {
     buf[0] = START_BYTE_PKT;
