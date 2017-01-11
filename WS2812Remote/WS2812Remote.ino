@@ -145,7 +145,13 @@ void doPkt()
 void setup()
 {
   // Set data pin as output
-  DATA_DDR |= (1 << DATA_PIN);    //  pinMode(DATA_PIN,OUTPUT);
+  DATA_DDR |= (1 << DATA_PIN);
+#ifdef LED_PORT
+  // Set LED pin as output
+  LED_DDR |= (1 << LED_PIN);
+  // turn off LED
+  LED_PORT &= ~(1 << LED_PIN);
+#endif // LED_PORT
 
   Serial.begin(BAUD_RATE);
 
@@ -171,12 +177,24 @@ void loop()
   switch(readByte()) {
   case START_BYTE_GLEDIATOR:
     if (g_mode & MODE_GLEDIATOR) {
+#ifdef LED_PORT
+      LED_PORT |= (1 << LED_PIN);
+#endif
       doGlediator();
+#ifdef LED_PORT
+      LED_PORT &= ~(1 << LED_PIN);
+#endif
     }
     break;
   case START_BYTE_PKT:
     if (g_mode & MODE_PKT) {
+#ifdef LED_PORT
+      LED_PORT |= (1 << LED_PIN);
+#endif
       doPkt();
+#ifdef LED_PORT
+      LED_PORT &= ~(1 << LED_PIN);
+#endif
     }
     break;
   default:

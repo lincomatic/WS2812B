@@ -25,12 +25,22 @@
 //##############################################################################
 
 // tested successfully using FTDI and Windows host PC at 1000000 baud
-#define BAUD_RATE 1000000 //256000//1000000 // 115200
-//#define BAUD_RATE 115200
-#define DATA_PORT          PORTD
-#define DATA_DDR           DDRD						
-#define DATA_PIN           2							
-#define PIXEL_CNT   16
+//#define BAUD_RATE 1000000 //256000//1000000 // 115200
+#define BAUD_RATE 115200
+#define DATA_PORT  PORTD
+#define DATA_DDR   DDRD						
+#define DATA_PIN   2							
+#define PIXEL_CNT  16
+
+// LED for showing activity, NOT THE LED STRAND
+// when a packet is received, blink this LED
+// digital pin 13 - onboard LED = PB5
+// comment out LED_PORT to disable
+#define LED_PORT PORTB
+#define LED_DDR  DDRB
+#define LED_PIN  5
+
+
 #define BYTE_CNT (PIXEL_CNT*3)
 #define BUF_LEN BYTE_CNT
 
@@ -55,4 +65,3 @@ typedef struct pixel_grb {
   uint8_t r;
   uint8_t b;
 } PIXEL_GRB;
-
