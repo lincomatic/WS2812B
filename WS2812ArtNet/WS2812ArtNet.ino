@@ -11,18 +11,34 @@ Hacked by SCL from
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include "./ArtnetWifi.h"
+#include "./ArduinoOTAMgr.h"
 
 //
 // --- begin configuration
 //
 #define WIFI_MGR // use AP mode to configure via captive portal
+#define OTA_UPDATE // OTA firmware update
 
-#define PIXEL_CNT 16 // number of LED's
+#define PIXEL_CNT 148 //16 // number of LED's
 
-#define PIN_LED    0
 #define PIN_DATA  14 
+#define PIN_LED    0
 // n.b. pin 15 internal pullup doesn't seem to work so shouldn't be used for reset
 #define PIN_FACTORY_RESET 12 // ground this pin to wipe out EEPROM & WiFi settings
+
+#define AP_PREFIX "WS2812ArtNet_"
+
+// OTA_UPDATE
+#define OTA_HOST "WS2812ArtNet"
+#define OTA_PASS "ws2812artnet"
+
+#ifndef WIFI_MGR
+//Wifi settings
+const char* ssid = "YOUR-SSID";
+const char* password = "YOUR-PASSPHRASE";
+#endif // !WIFI_MGR
+
+
 //
 // --- end configuration
 //
@@ -34,9 +50,9 @@ Hacked by SCL from
 int startUniverse = 0; 
 const int maxUniverses = CHANNEL_CNT / 512 + ((CHANNEL_CNT % 512) ? 1 : 0);
 
-//Wifi settings
-const char* ssid = "YOUR-SSID";
-const char* password = "YOUR-PASSPHRASE";
+#ifdef OTA_UPDATE
+ArduinoOTAMgr AOTAMgr;
+#endif
 
 typedef struct pixel_grb {
   uint8_t g;
@@ -216,8 +232,6 @@ int startUniverse;
 
 //flag for saving data
 
-#define CFG_FILE_FN "WS8212ArtNet.cfg"
-#define AP_PREFIX "WS2812ArtNet_"
 class WifiConfigurator {
   CONFIG_PARMS configParms;
   // a flag for ip setup
@@ -299,7 +313,7 @@ void WifiConfigurator::StartManager(void)
   shouldSaveConfig = false;
 
   // add parameter for artnet setup in GUI
-  WiFiManagerParameter custom_artnet_universe("artnet_universe", "ARTnet Universe (Default: 0)", configParms.artnet_universe, sizeof(configParms.artnet_universe));
+  WiFiManagerParameter custom_artnet_universe("artnet_universe", "Art-Net Universe (Default: 0)", configParms.artnet_universe, sizeof(configParms.artnet_universe));
 
   // add parameters for IP setup in GUI
   WiFiManagerParameter custom_ip("ip", "Static IP (Blank for DHCP)", configParms.staticIP, sizeof(configParms.staticIP));
@@ -688,10 +702,14 @@ void setup()
   ConnectWifi();
 #endif // WIFI_MGR
 
+#ifdef OTA_UPDATE
+  AOTAMgr.boot(OTA_HOST,OTA_PASS);
+#endif
 
-  Serial.print("ARTnet universe: ");
+
+  Serial.print("Art-Net universe: ");
   Serial.println(startUniverse);
-  Serial.println("Starting ARTnet");
+  Serial.println("Starting Art-Net");
   artnet.begin();
   leds.begin();
   initTest();
@@ -711,4 +729,9 @@ void loop()
 
   // we call the read function inside the loop
   artnet.read();
+
+#ifdef OTA_UPDATE
+  AOTAMgr.handle();
+#endif
+
 }
