@@ -129,7 +129,7 @@ void WS2812Strand::show()
 
 
 #define BTN_PRESS_SHORT 50  // ms
-#define BTN_PRESS_LONG 2000 // ms
+#define BTN_PRESS_LONG 500 // ms
 
 #define BTN_STATE_OFF   0
 #define BTN_STATE_SHORT 1 // short press
@@ -368,7 +368,7 @@ void WifiConfigurator::StartManager(void)
     Serial.println("timed out and failed to connect");
     Serial.println("rebooting...");
     //reset and try again, or maybe put it to deep sleep
-    ESP.reset();
+    reboot();
     //   we never get here.
   }
 
@@ -589,6 +589,12 @@ boolean ConnectWifi(void)
 #endif // !WIFI_MGR
 
 
+void reboot()
+{
+  WiFi.disconnect();
+  delay(1000);
+  ESP.reset();
+}
 
 void initTest()
 {
@@ -674,8 +680,7 @@ void factoryReset()
 {
   Serial.println("Factory Reset");
   wfCfg.resetCfg(1);
-  delay(1000);
-  ESP.reset(); 
+  reboot();
 }
 
 void setup()
