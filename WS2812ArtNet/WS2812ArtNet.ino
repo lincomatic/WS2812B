@@ -273,7 +273,7 @@ String WifiConfigurator::getUniqueSystemName()
   WiFi.softAPmacAddress(mac);
 
 
-  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String("-") + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) + String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
 
   macID.toUpperCase();
   String UniqueSystemName = String(AP_PREFIX) + macID;
