@@ -95,7 +95,7 @@ void WS2812Strand::begin()
 
 void WS2812Strand::fill(PIXEL_GRB *pixel)
 {
-  for (uint8_t i=0;i < PIXEL_CNT;i++) {
+  for (int i=0;i < PIXEL_CNT;i++) {
     pixelBuffer[i] = *pixel;
   }
 }
