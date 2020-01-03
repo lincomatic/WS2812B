@@ -26,7 +26,7 @@
 
 // tested successfully using FTDI and Windows host PC at 1000000 baud
 //#define BAUD_RATE 1000000 //256000//1000000 // 115200
-#define BAUD_RATE 115200
+#define BAUD_RATE 1000000
 #define DATA_PORT  PORTD
 #define DATA_DDR   DDRD						
 #define DATA_PIN   2							
